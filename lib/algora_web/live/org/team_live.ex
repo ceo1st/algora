@@ -9,14 +9,12 @@ defmodule AlgoraWeb.Org.TeamLive do
   def mount(%{"org_handle" => handle}, _session, socket) do
     org = Organizations.get_org_by_handle!(handle)
     members = Organizations.list_org_members(org)
-    contractors = Organizations.list_org_contractors(org)
 
     {:ok,
      socket
-     |> assign(:page_title, "Team")
+     |> assign(:page_title, "#{org.name} Team")
      |> assign(:org, org)
-     |> assign(:members, members)
-     |> assign(:contractors, contractors)}
+     |> assign(:members, members)}
   end
 
   @impl true
@@ -26,7 +24,7 @@ defmodule AlgoraWeb.Org.TeamLive do
       <.card>
         <.card_header>
           <.card_title>Team</.card_title>
-          <.card_description>People who are part of your organization</.card_description>
+          <.card_description>Members of {@org.name}</.card_description>
         </.card_header>
         <.card_content>
           <%= if Enum.empty?(@members) do %>
@@ -43,7 +41,13 @@ defmodule AlgoraWeb.Org.TeamLive do
                 <table class="min-w-full divide-y divide-border">
                   <thead>
                     <tr>
-                      <th scope="col" class="px-6 py-3.5 text-left text-sm font-semibold">Member</th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3.5 text-left text-sm font-semibold"
+                        style="padding-left: 4.75rem;"
+                      >
+                        Member
+                      </th>
                       <th scope="col" class="px-6 py-3.5 text-left text-sm font-semibold">Role</th>
                       <th scope="col" class="px-6 py-3.5 text-left text-sm font-semibold">Joined</th>
                     </tr>
@@ -60,7 +64,18 @@ defmodule AlgoraWeb.Org.TeamLive do
                           </.avatar>
                           <div>
                             <div class="font-medium">{member.user.name}</div>
-                            <div class="text-sm text-muted-foreground">@{member.user.handle}</div>
+                            <% {role, company} =
+                              case Admin.extract_current_role_and_company(member.user) do
+                                {:ok, {r, c}} -> {r, c}
+                                _ -> {nil, nil}
+                              end %>
+                            <%= if company && String.downcase(company) == String.downcase(@org.name) do %>
+                              <div class="text-sm text-muted-foreground">
+                                {role}
+                              </div>
+                            <% else %>
+                              <div class="text-sm text-muted-foreground">@{member.user.handle}</div>
+                            <% end %>
                           </div>
                         </div>
                       </td>
@@ -69,8 +84,8 @@ defmodule AlgoraWeb.Org.TeamLive do
                           {member.role |> Atom.to_string() |> String.capitalize()}
                         </.badge>
                       </td>
-                      <td class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
-                        {Calendar.strftime(member.inserted_at, "%B %d, %Y")}
+                      <td class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground tabular-nums">
+                        {Calendar.strftime(member.inserted_at, "%b %d, %Y")}
                       </td>
                     </tr>
                   </tbody>
@@ -78,45 +93,6 @@ defmodule AlgoraWeb.Org.TeamLive do
               </div>
             </div>
           <% end %>
-        </.card_content>
-      </.card>
-
-      <.card :if={length(@contractors) > 0}>
-        <.card_header>
-          <.card_title>Contractors</.card_title>
-          <.card_description>External contractors working with your organization</.card_description>
-        </.card_header>
-        <.card_content>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <.card :for={contractor <- @contractors}>
-              <.card_header class="space-y-0 pb-2">
-                <div class="flex items-center gap-3">
-                  <.avatar>
-                    <.avatar_image src={contractor.avatar_url} />
-                    <.avatar_fallback>{Algora.Util.initials(contractor.handle)}</.avatar_fallback>
-                  </.avatar>
-                  <div>
-                    <.card_title class="text-base">
-                      {contractor.name}
-                    </.card_title>
-                    <.card_description>@{contractor.handle}</.card_description>
-                  </div>
-                </div>
-              </.card_header>
-              <.card_content>
-                <div class="text-sm">
-                  <p class="line-clamp-2 text-muted-foreground">
-                    {contractor.bio || "No bio provided"}
-                  </p>
-                </div>
-              </.card_content>
-              <.card_footer>
-                <.button navigate={User.url(contractor)} variant="outline" class="w-full">
-                  View Profile
-                </.button>
-              </.card_footer>
-            </.card>
-          </div>
         </.card_content>
       </.card>
     </div>
