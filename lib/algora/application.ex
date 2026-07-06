@@ -5,6 +5,8 @@ defmodule Algora.Application do
 
   use Application
 
+  alias AlgoraCloud.Workers.SyncCandidates
+
   @impl true
   def start(_type, _args) do
     :ok = Appsignal.Logger.Handler.add("phoenix")
@@ -23,8 +25,8 @@ defmodule Algora.Application do
             timezone: "America/Los_Angeles",
             crontab:
               [{"0 3 * * *", Algora.Bounties.Jobs.SyncOpenBounties}] ++
-                if(Code.ensure_loaded?(AlgoraCloud.Workers.SyncCandidates),
-                  do: [{"0 * * * *", AlgoraCloud.Workers.SyncCandidates}],
+                if(Code.ensure_loaded?(SyncCandidates),
+                  do: [{"0 * * * *", SyncCandidates}],
                   else: []
                 )}
          ])},
@@ -32,8 +34,6 @@ defmodule Algora.Application do
         {Phoenix.PubSub, name: Algora.PubSub},
         # Start the Finch HTTP client for sending emails
         {Finch, name: Algora.Finch},
-        # Start ChromicPDF for contract PDF generation
-        {ChromicPDF, Application.get_all_env(:chromic_pdf)},
         # Task supervisor for background jobs
         {Task.Supervisor, name: Algora.TaskSupervisor},
         Algora.Github.TokenPool,
