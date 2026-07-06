@@ -5,6 +5,13 @@ defmodule AlgoraWeb.Components.TechBadge do
   import AlgoraWeb.Components.UI.Avatar
   import AlgoraWeb.Components.UI.Badge
 
+  @language_colors_path Path.join([:code.priv_dir(:algora), "dev", "language_colors.json"])
+  @external_resource @language_colors_path
+  @language_colors (case File.read(@language_colors_path) do
+                      {:ok, content} -> Jason.decode!(content)
+                      {:error, _} -> %{}
+                    end)
+
   attr :tech, :string, required: true
   attr :count, :integer, default: nil
   attr :variant, :string, default: "outline"
@@ -32,6 +39,16 @@ defmodule AlgoraWeb.Components.TechBadge do
       <span :if={@count} class="text-muted-foreground ml-auto">({@count})</span>
     </.badge>
     """
+  end
+
+  def has_icon?(tech) do
+    tech_lower = normalize(tech)
+    Enum.any?(langs(), &(normalize(&1) == tech_lower))
+  end
+
+  def language?(tech) do
+    tech_lower = String.downcase(tech)
+    Enum.any?(Map.keys(@language_colors), &(String.downcase(&1) == tech_lower))
   end
 
   defp badge_size_class("sm"), do: "text-[10px] px-1.5 py-0.5"
@@ -128,6 +145,9 @@ defmodule AlgoraWeb.Components.TechBadge do
     case String.downcase(tech) do
       "golang" ->
         "go"
+
+      "c/c++" ->
+        "cplusplus"
 
       "hcl" ->
         "terraform"
