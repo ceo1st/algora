@@ -295,9 +295,21 @@ defmodule Algora.Settings do
   def get_featured_talent_for_location(state) when is_binary(state) do
     case get("featured_talent_by_location") do
       %{} = locations ->
-        case Map.get(locations, state) do
-          ids when is_list(ids) -> ids
-          _ -> []
+        case String.split(state, "-*") do
+          [country, ""] ->
+            prefix = country <> "-"
+
+            locations
+            |> Enum.flat_map(fn {key, ids} ->
+              if String.starts_with?(key, prefix) and is_list(ids), do: ids, else: []
+            end)
+            |> Enum.uniq()
+
+          _ ->
+            case Map.get(locations, state) do
+              ids when is_list(ids) -> ids
+              _ -> []
+            end
         end
 
       _ ->
