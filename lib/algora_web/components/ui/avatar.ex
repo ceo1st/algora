@@ -26,8 +26,8 @@ defmodule AlgoraWeb.Components.UI.Avatar do
     ~H"""
     <img
       id={@id}
-      src={@src || ~p"/images/placeholder-avatar.png"}
-      class={classes(["aspect-square h-full w-full", @class])}
+      src={@src}
+      class={classes(["aspect-square h-full w-full hidden", @class])}
       phx-hook="AvatarImage"
       {@rest}
     />
@@ -41,7 +41,9 @@ defmodule AlgoraWeb.Components.UI.Avatar do
   def avatar_fallback(assigns) do
     ~H"""
     <span
-      class={classes(["flex h-full w-full items-center justify-center rounded-full", @class])}
+      class={
+        classes(["flex h-full w-full items-center justify-center rounded-full bg-muted", @class])
+      }
       {@rest}
     >
       {render_slot(@inner_block)}

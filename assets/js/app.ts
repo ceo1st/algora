@@ -893,19 +893,41 @@ const Hooks = {
   },
   AvatarImage: {
     mounted() {
-      this.handleError = () => {
+      this.preload(this.el.src);
+    },
+    preload(src: string) {
+      if (this.preloader) {
+        this.preloader.onload = null;
+        this.preloader.onerror = null;
+      }
+      this.el.classList.add("hidden");
+      if (src === "" || src == null) {
         this.errored = true;
-        this.el.style.display = "none";
+        return;
+      }
+      this.errored = false;
+      const preloader = new Image();
+      this.preloader = preloader;
+      preloader.onload = () => {
+        if (this.preloader !== preloader) return;
+        this.errored = false;
+        this.el.classList.remove("hidden");
       };
-      this.el.addEventListener("error", this.handleError);
+      preloader.onerror = () => {
+        if (this.preloader !== preloader) return;
+        this.errored = true;
+        this.el.classList.add("hidden");
+      };
+      preloader.src = src;
     },
     updated() {
-      if (this.errored) {
-        this.el.style.display = "none";
-      }
+      this.preload(this.el.src);
     },
     destroyed() {
-      this.el.removeEventListener("error", this.handleError);
+      if (this.preloader) {
+        this.preloader.onload = null;
+        this.preloader.onerror = null;
+      }
     },
   },
   LocalStateStore: {
