@@ -27,7 +27,7 @@ defmodule AlgoraWeb.Components.UI.Avatar do
     <img
       id={@id}
       src={@src}
-      class={classes(["aspect-square h-full w-full hidden", @class])}
+      class={classes(["aspect-square h-full w-full", @class])}
       phx-hook="AvatarImage"
       {@rest}
     />

@@ -893,41 +893,23 @@ const Hooks = {
   },
   AvatarImage: {
     mounted() {
-      this.preload(this.el.src);
-    },
-    preload(src: string) {
-      if (this.preloader) {
-        this.preloader.onload = null;
-        this.preloader.onerror = null;
-      }
-      this.el.classList.add("hidden");
-      if (src === "" || src == null) {
+      this.handleError = () => {
         this.errored = true;
-        return;
+        this.el.style.display = "none";
+      };
+      this.el.addEventListener("error", this.handleError, { once: true });
+      if (this.el.src === "" || this.el.src == null) {
+        this.el.style.display = "none";
       }
-      this.errored = false;
-      const preloader = new Image();
-      this.preloader = preloader;
-      preloader.onload = () => {
-        if (this.preloader !== preloader) return;
-        this.errored = false;
-        this.el.classList.remove("hidden");
-      };
-      preloader.onerror = () => {
-        if (this.preloader !== preloader) return;
-        this.errored = true;
-        this.el.classList.add("hidden");
-      };
-      preloader.src = src;
     },
     updated() {
-      this.preload(this.el.src);
+      if (this.errored) {
+        this.el.style.display = "none";
+        this.el.removeEventListener("error", this.handleError);
+      }
     },
     destroyed() {
-      if (this.preloader) {
-        this.preloader.onload = null;
-        this.preloader.onerror = null;
-      }
+      this.el.removeEventListener("error", this.handleError);
     },
   },
   LocalStateStore: {
