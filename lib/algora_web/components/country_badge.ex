@@ -8,6 +8,7 @@ defmodule AlgoraWeb.Components.CountryBadge do
   attr :count, :integer, default: nil
   attr :variant, :string, default: "outline"
   attr :size, :string, values: ~w(sm default), default: "default"
+  attr :class, :string, default: nil
   attr :rest, :global
 
   def country_badge(assigns) do
@@ -18,14 +19,20 @@ defmodule AlgoraWeb.Components.CountryBadge do
     assigns =
       assigns
       |> assign(:flag, flag)
-      |> assign(:label, if(suffix == "*", do: country_code, else: suffix))
+      |> assign(:label, String.slice(if(suffix == "*", do: country_code, else: assigns.state), 0, 5))
       |> assign(:badge_class, badge_size_class(assigns.size))
 
     ~H"""
-    <.badge :if={@flag} variant={@variant} class={classes(["gap-1", @badge_class])} title={@state} {@rest}>
+    <.badge
+      :if={@flag}
+      variant={@variant}
+      class={classes(["gap-1", @badge_class, @class])}
+      title={@state}
+      {@rest}
+    >
       <span>{@flag}</span>
       <span class="line-clamp-1">{@label}</span>
-      <span :if={@count} class="text-muted-foreground">({@count})</span>
+      <span :if={@count} class="text-muted-foreground ml-auto">({@count})</span>
     </.badge>
     """
   end
