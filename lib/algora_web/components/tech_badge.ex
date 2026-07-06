@@ -6,6 +6,7 @@ defmodule AlgoraWeb.Components.TechBadge do
   import AlgoraWeb.Components.UI.Badge
 
   attr :tech, :string, required: true
+  attr :count, :integer, default: nil
   attr :variant, :string, default: "outline"
   attr :size, :string, values: ~w(sm default), default: "default"
   attr :rest, :global
@@ -18,7 +19,7 @@ defmodule AlgoraWeb.Components.TechBadge do
       |> assign(:avatar_class, avatar_size_class(assigns.size))
 
     ~H"""
-    <.badge variant={@variant} class={@badge_class} {@rest}>
+    <.badge variant={@variant} class={classes([@badge_class, "gap-1"])} {@rest}>
       <%= if Enum.any?(langs(), &(normalize(&1) == @tech_lower)) do %>
         <.avatar class={classes([@avatar_class, "mr-1 rounded-sm"])}>
           <.avatar_image src={icon_url(@tech_lower)} class={icon_class(@tech_lower)} />
@@ -28,6 +29,7 @@ defmodule AlgoraWeb.Components.TechBadge do
         </.avatar>
       <% end %>
       <span class="line-clamp-1">{@tech}</span>
+      <span :if={@count} class="text-muted-foreground ml-auto">({@count})</span>
     </.badge>
     """
   end
