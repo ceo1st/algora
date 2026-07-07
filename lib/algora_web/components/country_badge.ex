@@ -19,20 +19,20 @@ defmodule AlgoraWeb.Components.CountryBadge do
     assigns =
       assigns
       |> assign(:flag, flag)
-      |> assign(:label, String.slice(if(suffix == "*", do: country_code, else: assigns.state), 0, 5))
+      |> assign(:label, if(suffix == "*", do: country_code, else: assigns.state))
       |> assign(:badge_class, badge_size_class(assigns.size))
 
     ~H"""
     <.badge
       :if={@flag}
       variant={@variant}
-      class={classes(["gap-1", @badge_class, @class])}
+      class={classes(["gap-1 shrink-0", @badge_class, @class])}
       title={@state}
       {@rest}
     >
       <span>{@flag}</span>
-      <span class="line-clamp-1">{@label}</span>
-      <span :if={@count} class="text-muted-foreground ml-auto">({@count})</span>
+      <span class="whitespace-nowrap">{@label}</span>
+      <span :if={@count} class="text-muted-foreground ml-auto whitespace-nowrap">({@count})</span>
     </.badge>
     """
   end

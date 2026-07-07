@@ -26,17 +26,17 @@ defmodule AlgoraWeb.Components.TechBadge do
       |> assign(:avatar_class, avatar_size_class(assigns.size))
 
     ~H"""
-    <.badge variant={@variant} class={classes([@badge_class, "gap-1"])} {@rest}>
+    <.badge variant={@variant} class={classes([@badge_class, "gap-1 shrink-0"])} {@rest}>
       <%= if Enum.any?(langs(), &(normalize(&1) == @tech_lower)) do %>
-        <.avatar class={classes([@avatar_class, "mr-1 rounded-sm"])}>
+        <.avatar class={classes([@avatar_class, "rounded-sm shrink-0"])}>
           <.avatar_image src={icon_url(@tech_lower)} class={icon_class(@tech_lower)} />
           <.avatar_fallback>
             {Algora.Util.initials(@tech, 1)}
           </.avatar_fallback>
         </.avatar>
       <% end %>
-      <span class="line-clamp-1">{@tech}</span>
-      <span :if={@count} class="text-muted-foreground ml-auto">({@count})</span>
+      <span class="whitespace-nowrap">{@tech}</span>
+      <span :if={@count} class="text-muted-foreground ml-auto whitespace-nowrap">({@count})</span>
     </.badge>
     """
   end
