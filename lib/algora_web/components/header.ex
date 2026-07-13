@@ -40,7 +40,7 @@ defmodule AlgoraWeb.Components.Header do
           <button
             type="button"
             class="rounded-md p-2.5 text-muted-foreground hover:text-foreground"
-            phx-click={mobile_menu_show_js()}
+            onclick="document.getElementById('mobile-menu').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
           >
             <span class="sr-only">Open main menu</span>
             <.icon name="tabler-menu" class="h-6 w-6" />
@@ -114,7 +114,7 @@ defmodule AlgoraWeb.Components.Header do
             <button
               type="button"
               class="rounded-md p-2.5 text-muted-foreground hover:text-foreground"
-              phx-click={mobile_menu_hide_js()}
+              onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
             >
               <span class="sr-only">Close menu</span>
               <.icon name="tabler-x" class="h-6 w-6" />
@@ -344,15 +344,4 @@ defmodule AlgoraWeb.Components.Header do
     """
   end
 
-  defp mobile_menu_show_js do
-    "overflow-hidden"
-    |> JS.add_class(to: "body")
-    |> JS.show(to: "#mobile-menu")
-  end
-
-  defp mobile_menu_hide_js do
-    [to: "#mobile-menu"]
-    |> JS.hide()
-    |> JS.remove_class("overflow-hidden", to: "body")
-  end
 end
