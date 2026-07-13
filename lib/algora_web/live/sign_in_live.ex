@@ -17,7 +17,11 @@ defmodule AlgoraWeb.SignInLive do
     <div class="flex min-h-[100svh] bg-[#111113]" id="sign-in-page" phx-hook="LocalStateStore">
       <div class="relative flex flex-1 flex-col justify-center px-4 py-16 sm:px-6 lg:flex-none lg:px-20 xl:px-24 lg:border-r lg:border-border">
         <.wordmark class="h-10 w-auto absolute top-4 left-4 sm:top-8 sm:left-8" />
-        <div class="mx-auto w-full max-w-sm lg:w-96 h-auto flex flex-col min-h-[426px]">
+        <div class={[
+          "mx-auto w-full max-w-sm lg:w-96 h-auto flex flex-col min-h-[426px]",
+          "[&:has(#user-type-developer:checked)_#company-form]:hidden",
+          "[&:has(#user-type-company:checked)_#developer-form]:hidden"
+        ]}>
           <div :if={!@secret}>
             <h2 class="mt-8 text-3xl/9 font-bold tracking-tight text-foreground">
               <%= if @mode == :signup do %>
@@ -54,12 +58,12 @@ defmodule AlgoraWeb.SignInLive do
                   "border-border has-[:checked]:border-primary has-[:checked]:bg-primary/10"
                 ]}>
                   <input
+                    id="user-type-company"
                     type="radio"
                     name="user_type"
                     value="company"
-                    checked={@user_type == "company"}
+                    checked
                     class="sr-only"
-                    phx-click={JS.show(to: "#company-form") |> JS.hide(to: "#developer-form")}
                   />
                   <span class="flex flex-1 items-center justify-between">
                     <span class="text-sm font-medium">Company</span>
@@ -75,12 +79,11 @@ defmodule AlgoraWeb.SignInLive do
                   "border-border has-[:checked]:border-primary has-[:checked]:bg-primary/10"
                 ]}>
                   <input
+                    id="user-type-developer"
                     type="radio"
                     name="user_type"
                     value="developer"
-                    checked={@user_type == "developer"}
                     class="sr-only"
-                    phx-click={JS.show(to: "#developer-form") |> JS.hide(to: "#company-form")}
                   />
                   <span class="flex flex-1 items-center justify-between">
                     <span class="text-sm font-medium">Developer</span>
@@ -104,7 +107,7 @@ defmodule AlgoraWeb.SignInLive do
           </div>
 
           <div :if={@mode == :login} class="mt-8">
-            <div id="company-form" class={if @user_type == "developer", do: "hidden"}>
+            <div id="company-form">
               <.simple_form
                 :if={!@secret}
                 for={@form}
@@ -124,7 +127,7 @@ defmodule AlgoraWeb.SignInLive do
               </.simple_form>
             </div>
 
-            <div id="developer-form" class={if @user_type == "company", do: "hidden"}>
+            <div id="developer-form">
               <.button :if={!@secret} href={@authorize_url} class="w-full py-5">
                 <Logos.github class="size-5 mr-2 -ml-1 shrink-0" /> Continue with GitHub
               </.button>
@@ -307,7 +310,6 @@ defmodule AlgoraWeb.SignInLive do
      |> assign(:return_to, params["return_to"])
      |> assign(:authorize_url, authorize_url)
      |> assign(:secret, nil)
-     |> assign(:user_type, "company")
      |> assign(:mode, socket.assigns.live_action)
      |> assign_form(changeset)}
   end
