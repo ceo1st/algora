@@ -65,7 +65,7 @@ defmodule AlgoraWeb.Org.TeamLive do
                           <div>
                             <div class="font-medium">{member.user.name}</div>
                             <% {role, company} =
-                              case Admin.extract_current_role_and_company(member.user) do
+                              case Algora.Cloud.extract_current_role_and_company(member.user) do
                                 {:ok, {r, c}} -> {r, c}
                                 _ -> {nil, nil}
                               end %>

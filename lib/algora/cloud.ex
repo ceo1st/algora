@@ -118,6 +118,10 @@ defmodule Algora.Cloud do
     call(AlgoraCloud, :label_ats_event, [event], nil)
   end
 
+  def extract_current_role_and_company(user) do
+    call(AlgoraCloud, :extract_current_role_and_company, [user], {:error, :not_available})
+  end
+
   defp call(module, function, args, fallback) do
     if :code.which(module) == :non_existing do
       fallback
