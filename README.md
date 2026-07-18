@@ -17,8 +17,6 @@
     <a href="https://twitter.com/algoraio">Twitter</a>
     ·
     <a href="https://www.youtube.com/@algora-io">YouTube</a>
-    ·
-    <a href="https://github.com/algora-io/console/issues">Issues</a>
   </p>
 
 <p align="center">
@@ -119,24 +117,6 @@ OSS communities and closed source teams can **self-host** or join **[Algora.io](
     </td>
   </tr>
 </table>
-
-<!-- ROADMAP -->
-
-## Roadmap & community requests
-
-- Profile Embed
-  - Embeddable profile for GitHub and personal websites
-  - One-click bounty and contract sharing
-- Apply Embed
-  - One-click apply embed for careers pages
-- New payment/payout options
-  - Alipay, Wise, crypto etc.
-- Localization of platform & matches
-- New workflow integrations
-  - GitLab, Linear, Plane, Cursor etc.
-- New clients
-  - Mobile, desktop, CLI
-- Crowdfunding enhancements
 
 <!-- GETTING STARTED -->
 
